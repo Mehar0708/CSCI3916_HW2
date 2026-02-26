@@ -4,6 +4,8 @@ File: Server.js
 Description: Web API scaffolding for Movie API
  */
 
+require('dotenv').config();
+
 var express = require('express');
 var http = require('http');
 var bodyParser = require('body-parser');
@@ -72,7 +74,45 @@ router.post('/signin', (req, res) => {
     }
 });
 
-router.route('/testcollection')
+router.route('/movies')
+    .get((req, res) => {
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = 'GET movies';
+        o.query = req.query;
+        o.env = process.env.UNIQUE_KEY;
+        res.json(o);
+    })
+    .post((req, res) => {
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = 'movie saved';
+        o.query = req.query;
+        o.env = process.env.UNIQUE_KEY;
+        res.json(o);
+    })
+    .put(authJwtController.isAuthenticated, (req, res) => {
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = 'movie updated';
+        o.query = req.query;
+        o.env = process.env.UNIQUE_KEY;
+        res.json(o);
+    })
+    .delete(authController.isAuthenticated, (req, res) => {
+        var o = getJSONObjectForMovieRequirement(req);
+        o.status = 200;
+        o.message = 'movie deleted';
+        o.query = req.query;
+        o.env = process.env.UNIQUE_KEY;
+        res.json(o);
+    })
+    .all((req, res) => {
+        res.status(405).send({ message: 'HTTP method not supported.' });
+    });
+
+
+    router.route('/testcollection')
     .delete(authController.isAuthenticated, (req, res) => {
         console.log(req.body);
         res = res.status(200);
